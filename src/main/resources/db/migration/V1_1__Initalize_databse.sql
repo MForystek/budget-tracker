@@ -1,17 +1,15 @@
-CREATE TABLE IF NOT EXISTS income (
-    id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    date date,
-    amount double,
-    type varchar(20) CHECK (type IN ('CASH', 'CARD')),
-    description varchar(255),
-    category varchar(20) CHECK (category IN ('PAYCHECK', 'BONUS', 'GIFT', 'SELLING', 'OTHER'))
+CREATE TABLE IF NOT EXISTS category (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(40) NOT NULL,
+    type VARCHAR(20) CHECK (type IN ('INCOME', 'EXPENSE')) NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS expense (
-    id int NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    date date,
-    amount double,
-    type varchar(20) CHECK (type IN ('CASH', 'CARD')),
-    description varchar(255),
-    category varchar(20) CHECK (category IN ('GROCERIES', 'RESTAURANTS', 'TAKEAWAY', 'COFFEE', 'CATERING', 'DROGERIE', 'MEDICAL', 'CLOTHES', 'APARTMENT', 'TRANSPORT', 'SUBSCRIPTIONS', 'PLEASURES', 'TOYS', 'TRAVELING', 'BILLS', 'OTHER', 'INVESTING'))
+CREATE TABLE IF NOT EXISTS transaction (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    date DATE NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    payment_method VARCHAR(20) CHECK (payment_method IN ('CASH', 'CARD')) NOT NULL,
+    description VARCHAR(255),
+    category_id INT,
+    CONSTRAINT fk_category FOREIGN KEY (category_id) REFERENCES category(id)
 );

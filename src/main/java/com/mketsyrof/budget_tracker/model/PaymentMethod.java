@@ -1,6 +1,6 @@
 package com.mketsyrof.budget_tracker.model;
 
-public enum PaymentType {
+public enum PaymentMethod {
     CASH,
     CARD
 }
