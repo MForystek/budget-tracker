@@ -17,6 +17,10 @@ public class Transaction {
     @Column
     private Double amount;
 
+    @ManyToOne
+    @JoinColumn(name = "currency_id")
+    private Currency currency;
+
     @Column
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
@@ -28,9 +32,10 @@ public class Transaction {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    public Transaction(LocalDate date, Double amount, PaymentMethod paymentMethod, String description, Category category) {
+    public Transaction(LocalDate date, Double amount, Currency currency, PaymentMethod paymentMethod, String description, Category category) {
         this.date = date;
         this.amount = amount;
+        this.currency = currency;
         this.paymentMethod = paymentMethod;
         this.description = description;
         this.category = category;
@@ -49,6 +54,10 @@ public class Transaction {
 
     public Double getAmount() {
         return amount;
+    }
+
+    public Currency getCurrency() {
+        return currency;
     }
 
     public PaymentMethod getPaymentMethod() {
