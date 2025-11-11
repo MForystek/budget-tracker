@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 
 @Service
@@ -43,12 +44,14 @@ public class TransactionService {
     }
 
     public void createTransaction(LocalDate date, Double amount, String currencyCode, PaymentMethod paymentMethod, Optional<String> description, String categoryName) {
-        Currency currency = currencyRepository.findByCode(currencyCode);
+        Currency currency = currencyRepository.findByCode(currencyCode.toUpperCase(Locale.ROOT));
         if (currency == null) {
             throw new IllegalArgumentException("Unknown currency code: " + currencyCode);
         }
-
-        Category category = categoryRepository.findByName(categoryName);
+        Category category = categoryRepository.findByName(categoryName.toUpperCase(Locale.ROOT));
+        if (category == null) {
+            throw new IllegalArgumentException("Unknown category: " + categoryName);
+        }
         transactionRepository.save(new Transaction(date, amount, currency, paymentMethod, description.orElse(""), category));
     }
 }
