@@ -4,20 +4,19 @@ import com.mketsyrof.budget_tracker.model.*;
 import com.mketsyrof.budget_tracker.repo.CategoryRepository;
 import com.mketsyrof.budget_tracker.repo.CurrencyRepository;
 import com.mketsyrof.budget_tracker.repo.TransactionRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
+@AllArgsConstructor
 @Service
 public class TransactionService {
-    private final Logger log = LoggerFactory.getLogger(this.getClass().getSimpleName());
-
     @Autowired
     private TransactionRepository transactionRepository;
 
@@ -27,11 +26,7 @@ public class TransactionService {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public TransactionService(TransactionRepository transactionRepository) {
-        this.transactionRepository = transactionRepository;
-    }
-
-    public List<Transaction> getAllTransactions() {
+    public List<Transaction> getAll() {
         return transactionRepository.findAll();
     }
 
@@ -43,7 +38,7 @@ public class TransactionService {
         return transactionRepository.findByCategory_Type(TransactionType.EXPENSE);
     }
 
-    public void createTransaction(LocalDate date, Double amount, String currencyCode, PaymentMethod paymentMethod, Optional<String> description, String categoryName) {
+    public void create(LocalDate date, Double amount, String currencyCode, PaymentMethod paymentMethod, Optional<String> description, String categoryName) throws IllegalArgumentException {
         Currency currency = currencyRepository.findByCode(currencyCode.toUpperCase(Locale.ROOT));
         if (currency == null) {
             throw new IllegalArgumentException("Unknown currency code: " + currencyCode);
@@ -53,5 +48,11 @@ public class TransactionService {
             throw new IllegalArgumentException("Unknown category: " + categoryName);
         }
         transactionRepository.save(new Transaction(date, amount, currency, paymentMethod, description.orElse(""), category));
+    }
+
+    public void delete(long transactionId) throws NoSuchElementException {
+        Transaction transaction = transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new NoSuchElementException("No transaction with id: " + transactionId));
+        transactionRepository.delete(transaction);
     }
 }

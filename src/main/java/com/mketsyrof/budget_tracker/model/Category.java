@@ -1,7 +1,9 @@
 package com.mketsyrof.budget_tracker.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class Category {
     @Id
@@ -16,24 +18,11 @@ public class Category {
     @Enumerated(EnumType.STRING)
     private TransactionType type;
 
-    public Category(Long id, String name, TransactionType type) {
-        this.id = id;
+    public Category(String name, TransactionType type) {
         this.name = name;
         this.type = type;
     }
 
     protected Category() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public TransactionType getType() {
-        return type;
     }
 }

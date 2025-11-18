@@ -1,7 +1,9 @@
 package com.mketsyrof.budget_tracker.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
+@Getter
 @Entity
 public class Currency {
     @Id
@@ -23,15 +25,4 @@ public class Currency {
     protected Currency() {
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public String getCode() {
-        return code;
-    }
-
-    public String getName() {
-        return name;
-    }
 }
