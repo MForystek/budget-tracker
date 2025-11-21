@@ -24,16 +24,13 @@ public class TransactionController {
 
     @GetMapping
     public List<Transaction> getAllTransactionOfGivenType(@RequestParam(name = "type", required = false) TransactionType type) {
-        if (type.equals(TransactionType.INCOME)) {
-            log.info("GET " + API_PATH_FOR_LOGS + "?type=INCOME");
-            return transactionService.getAllIncomes();
+        if (type == null) {
+            log.info("GET " + API_PATH_FOR_LOGS);
+            return transactionService.getAll();
         }
-        if (type.equals(TransactionType.EXPENSE)) {
-            log.info("GET " + API_PATH_FOR_LOGS + "?type=EXPENSE");
-            return transactionService.getAllExpenses();
-        }
-        log.info("GET " + API_PATH_FOR_LOGS);
-        return transactionService.getAll();
+
+        log.info("GET " + API_PATH_FOR_LOGS + "?type={}", type);
+        return transactionService.getAllOfType(type);
     }
 
     @PostMapping
@@ -49,7 +46,13 @@ public class TransactionController {
                 transactionDto.getCategoryName());
     }
 
-    @DeleteMapping("{transactionId}")
+    @PutMapping("/{transactionId}")
+    public void updateTransaction(@PathVariable(value = "transactionId") long transactionId, @RequestBody @Valid TransactionDto transactionDto) {
+        log.info("PUT " + API_PATH_FOR_LOGS + "/{}", transactionId);
+        transactionService.update(transactionId, transactionDto);
+    }
+
+    @DeleteMapping("/{transactionId}")
     public void deleteTransaction(@PathVariable(value = "transactionId") long transactionId) {
         log.info("DELETE " + API_PATH_FOR_LOGS + "/{}", transactionId);
         transactionService.delete(transactionId);

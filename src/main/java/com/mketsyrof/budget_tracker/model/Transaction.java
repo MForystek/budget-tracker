@@ -1,16 +1,21 @@
 package com.mketsyrof.budget_tracker.model;
 
+import com.mketsyrof.budget_tracker.dto.TransactionDto;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Getter
+@Setter
 @Entity
 public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
+    @Setter(AccessLevel.NONE)
     private Long id;
 
     @Column

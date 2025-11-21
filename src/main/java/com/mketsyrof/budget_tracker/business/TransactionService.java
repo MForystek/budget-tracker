@@ -1,5 +1,6 @@
 package com.mketsyrof.budget_tracker.business;
 
+import com.mketsyrof.budget_tracker.dto.TransactionDto;
 import com.mketsyrof.budget_tracker.model.*;
 import com.mketsyrof.budget_tracker.repo.CategoryRepository;
 import com.mketsyrof.budget_tracker.repo.CurrencyRepository;
@@ -30,12 +31,8 @@ public class TransactionService {
         return transactionRepository.findAll();
     }
 
-    public List<Transaction> getAllIncomes() {
-        return transactionRepository.findByCategory_Type(TransactionType.INCOME);
-    }
-
-    public List<Transaction> getAllExpenses() {
-        return transactionRepository.findByCategory_Type(TransactionType.EXPENSE);
+    public List<Transaction> getAllOfType(TransactionType type) {
+        return transactionRepository.findByCategory_Type(type);
     }
 
     public void create(LocalDate date, Double amount, String currencyCode, PaymentMethod paymentMethod, Optional<String> description, String categoryName) throws IllegalArgumentException {
@@ -50,9 +47,26 @@ public class TransactionService {
         transactionRepository.save(new Transaction(date, amount, currency, paymentMethod, description.orElse(""), category));
     }
 
+    public void update(long transactionId, TransactionDto transactionDto) throws NoSuchElementException {
+        Transaction transaction = verifyAndGetTransactionById(transactionId);
+        transaction.setDate(transactionDto.getDate());
+        transaction.setAmount(transactionDto.getAmount());
+        transaction.setCurrency(currencyRepository.findByCode(transactionDto.getCurrencyCode()));
+        transaction.setPaymentMethod(transactionDto.getPaymentMethod());
+        if (transactionDto.getDescription().isPresent()) {
+            transaction.setDescription(transactionDto.getDescription().get());
+        }
+        transaction.setCategory(categoryRepository.findByName(transactionDto.getCategoryName()));
+        transactionRepository.save(transaction);
+    }
+
     public void delete(long transactionId) throws NoSuchElementException {
-        Transaction transaction = transactionRepository.findById(transactionId)
-                .orElseThrow(() -> new NoSuchElementException("No transaction with id: " + transactionId));
+        Transaction transaction = verifyAndGetTransactionById(transactionId);
         transactionRepository.delete(transaction);
+    }
+
+    private Transaction verifyAndGetTransactionById(long transactionId) throws NoSuchElementException {
+        return transactionRepository.findById(transactionId)
+                .orElseThrow(() -> new NoSuchElementException("No transaction with id: " + transactionId));
     }
 }
