@@ -1,6 +1,5 @@
 package com.mketsyrof.budget_tracker.model;
 
-import com.mketsyrof.budget_tracker.dto.TransactionDto;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -50,5 +49,4 @@ public class Transaction {
 
     protected Transaction() {
     }
-
 }

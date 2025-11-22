@@ -3,7 +3,6 @@ package com.mketsyrof.budget_tracker.web;
 import com.mketsyrof.budget_tracker.business.TransactionService;
 import com.mketsyrof.budget_tracker.dto.TransactionDto;
 import com.mketsyrof.budget_tracker.model.TransactionType;
-import com.mketsyrof.budget_tracker.model.Transaction;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +22,7 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @GetMapping
-    public List<Transaction> getAllTransactionOfGivenType(@RequestParam(name = "type", required = false) TransactionType type) {
+    public List<TransactionDto> getAllTransactionOfGivenType(@RequestParam(name = "type", required = false) TransactionType type) {
         if (type == null) {
             log.info("GET " + API_PATH_FOR_LOGS);
             return transactionService.getAll();
@@ -37,13 +36,7 @@ public class TransactionController {
     @ResponseStatus(code = HttpStatus.CREATED)
     public void addTransaction(@RequestBody @Valid TransactionDto transactionDto) {
         log.info("POST " + API_PATH_FOR_LOGS);
-        transactionService.create(
-                transactionDto.getDate(),
-                transactionDto.getAmount(),
-                transactionDto.getCurrencyCode(),
-                transactionDto.getPaymentMethod(),
-                transactionDto.getDescription(),
-                transactionDto.getCategoryName());
+        transactionService.create(transactionDto);
     }
 
     @PutMapping("/{transactionId}")
