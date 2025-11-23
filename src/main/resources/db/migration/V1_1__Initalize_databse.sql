@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS category (
 CREATE TABLE IF NOT EXISTS transaction (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     date DATE NOT NULL,
-    amount DECIMAL(10,2) NOT NULL,
+    amount DECIMAL(10,2) NOT NULL CHECK (amount > 0),
     currency_code CHAR(3) NOT NULL,
     payment_method CHAR(4) CHECK (payment_method IN ('CASH', 'CARD')) NOT NULL,
     description VARCHAR(255) NOT NULL,

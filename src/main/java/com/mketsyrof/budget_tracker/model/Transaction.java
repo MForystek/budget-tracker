@@ -18,25 +18,25 @@ public class Transaction {
     @Setter(AccessLevel.NONE)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private LocalDate date;
 
-    @Column
+    @Column(nullable = false)
     private Double amount;
 
     @ManyToOne
-    @JoinColumn(name = "currency_code")
+    @JoinColumn(name = "currency_code", nullable = false)
     private Currency currency;
 
-    @Column
+    @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private PaymentMethod paymentMethod;
 
-    @Column
+    @Column(nullable = false)
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
     public Transaction(LocalDate date, Double amount, Currency currency, PaymentMethod paymentMethod, String description, Category category) {
