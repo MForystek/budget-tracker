@@ -22,8 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TransactionServiceTest {
@@ -135,6 +134,28 @@ public class TransactionServiceTest {
     }
 
     @Test
+    void createMissingCurrencyTest() {
+        when(currencyServiceMock.getByCode(CURRENCY.getCode()))
+                .thenThrow(new NoSuchElementException());
+
+        assertThatThrownBy(() -> transactionService.create(TRANSACTION_DTO))
+                .isInstanceOf(NoSuchElementException.class);
+
+        verifyNoInteractions(transactionRepositoryMock);
+    }
+
+    @Test
+    void createMissingCategoryTest() {
+        when(categoryServiceMock.getByNameAndType(CATEGORY_INCOME.getName(), CATEGORY_INCOME.getType()))
+                .thenThrow(new NoSuchElementException());
+
+        assertThatThrownBy(() -> transactionService.create(TRANSACTION_DTO))
+                .isInstanceOf(NoSuchElementException.class);
+
+        verifyNoInteractions(transactionRepositoryMock);
+    }
+
+    @Test
     void updateTest() {
         Transaction transaction = new Transaction(DATE, 5.0, CURRENCY, PAYMENT_METHOD, DESCRIPTION, CATEGORY_INCOME);
         Transaction newTransaction = TransactionMapper.mapToEntity(TRANSACTION_DTO, CURRENCY, CATEGORY_INCOME);
@@ -163,5 +184,36 @@ public class TransactionServiceTest {
         assertThat(TRANSACTION_DTO.getCategoryType()).isEqualTo(transaction.getCategory().getType());
 
         verify(transactionRepositoryMock).save(newTransaction);
+    }
+
+    @Test
+    void updateMissingCurrencyTest() {
+        when(currencyServiceMock.getByCode(CURRENCY.getCode()))
+                .thenThrow(new NoSuchElementException());
+
+        assertThatThrownBy(() -> transactionService.update(ID, TRANSACTION_DTO))
+                .isInstanceOf(NoSuchElementException.class);
+
+        verifyNoInteractions(transactionRepositoryMock);
+    }
+
+    @Test
+    void updateMissingCategoryTest() {
+        when(categoryServiceMock.getByNameAndType(CATEGORY_INCOME.getName(), CATEGORY_INCOME.getType()))
+                .thenThrow(new NoSuchElementException());
+
+        assertThatThrownBy(() -> transactionService.update(ID, TRANSACTION_DTO))
+                .isInstanceOf(NoSuchElementException.class);
+
+        verifyNoInteractions(transactionRepositoryMock);
+    }
+
+    @Test
+    void updateTransactionNotFound() {
+        when(transactionRepositoryMock.findById(ID))
+                .thenThrow(new NoSuchElementException());
+
+        assertThatThrownBy(() -> transactionService.update(ID, TRANSACTION_DTO))
+                .isInstanceOf(NoSuchElementException.class);
     }
 }
