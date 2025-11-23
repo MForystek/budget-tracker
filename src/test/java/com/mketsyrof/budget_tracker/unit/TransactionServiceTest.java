@@ -26,10 +26,14 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class TransactionServiceTest {
     private static final long ID = 0;
+    private static final LocalDate DATE = LocalDate.EPOCH;
+    private static final double AMOUNT = 1.0;
+    private static final Currency CURRENCY = new Currency("PLN", "Polish Złoty");
+    private static final PaymentMethod PAYMENT_METHOD = PaymentMethod.CARD;
+    private static final String DESCRIPTION = "Description";
     private static final Category CATEGORY_INCOME = new Category("PAYCHECK", TransactionType.INCOME);
     private static final Category CATEGORY_EXPENSE = new Category("GROCERIES", TransactionType.EXPENSE);
-    private static final Currency CURRENCY = new Currency("PLN", "Polish Złoty");
-    private static final Transaction TRANSACTION = new Transaction(LocalDate.EPOCH, 1.0, CURRENCY, PaymentMethod.CARD, "Description", CATEGORY_INCOME);
+    private static final Transaction TRANSACTION = new Transaction(DATE, AMOUNT, CURRENCY, PAYMENT_METHOD, DESCRIPTION, CATEGORY_INCOME);
 
     @Mock
     private TransactionRepository transactionRepositoryMock;
@@ -79,7 +83,7 @@ public class TransactionServiceTest {
 
     @Test
     void getAllOfTypeExpenseTest() {
-        Transaction transaction = new Transaction(LocalDate.EPOCH, 1.0, CURRENCY, PaymentMethod.CARD, "Description", CATEGORY_EXPENSE);
+        Transaction transaction = new Transaction(DATE, AMOUNT, CURRENCY, PAYMENT_METHOD, DESCRIPTION, CATEGORY_EXPENSE);
 
         when(transactionRepositoryMock.findByCategory_Type(TransactionType.EXPENSE))
                 .thenReturn(List.of(transaction));
@@ -93,7 +97,7 @@ public class TransactionServiceTest {
 
     @Test
     void createTest() {
-        TransactionDto transactionDto = new TransactionDto(LocalDate.EPOCH, 1.0, CURRENCY.getCode(), PaymentMethod.CARD, "Description", CATEGORY_INCOME.getName(), CATEGORY_INCOME.getType());
+        TransactionDto transactionDto = new TransactionDto(DATE, AMOUNT, CURRENCY.getCode(), PAYMENT_METHOD, DESCRIPTION, CATEGORY_INCOME.getName(), CATEGORY_INCOME.getType());
         Transaction transaction = TransactionMapper.mapToEntity(transactionDto, CURRENCY, CATEGORY_INCOME);
 
         when(currencyServiceMock.getByCode(CURRENCY.getCode()))
@@ -106,11 +110,11 @@ public class TransactionServiceTest {
         Transaction result = transactionService.create(transactionDto);
 
         verify(transactionRepositoryMock).save(argThat(t ->
-                t.getDate().equals(LocalDate.EPOCH) &&
-                t.getAmount() == 1.0 &&
+                t.getDate().equals(DATE) &&
+                t.getAmount() == AMOUNT &&
                 t.getCurrency().equals(CURRENCY) &&
                 t.getPaymentMethod().equals(PaymentMethod.CARD) &&
-                t.getDescription().equals("Description") &&
+                t.getDescription().equals(DESCRIPTION) &&
                 t.getCategory().equals(CATEGORY_INCOME)));
         assertThat(result).isEqualTo(transaction);
     }
