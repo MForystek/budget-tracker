@@ -18,7 +18,7 @@ public class TransactionMapperTest {
                 new Currency("PLN", "Polish Złoty"),
                 PaymentMethod.CARD,
                 "Description",
-                new Category("PAYCHECK", TransactionType.INCOME)
+                new Category("PAYCHECK", CategoryType.INCOME)
         );
         TransactionDto transactionDtoManual = new TransactionDto(
                 LocalDate.EPOCH,
@@ -27,7 +27,7 @@ public class TransactionMapperTest {
                 PaymentMethod.CARD,
                 "Description",
                 "PAYCHECK",
-                TransactionType.INCOME
+                CategoryType.INCOME
         );
         TransactionDto transactionDtoFromMapper = TransactionMapper.mapToDto(transaction);
 
@@ -41,7 +41,7 @@ public class TransactionMapperTest {
     @Test
     void toEntityTest() {
         Currency currency = new Currency("PLN", "Polish Złoty");
-        Category category = new Category("PAYCHECK", TransactionType.INCOME);
+        Category category = new Category("PAYCHECK", CategoryType.INCOME);
         TransactionDto transactionDto = new TransactionDto(
                 LocalDate.EPOCH,
                 1.0,

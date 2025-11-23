@@ -16,9 +16,9 @@ public class Category {
 
     @Column
     @Enumerated(EnumType.STRING)
-    private TransactionType type;
+    private CategoryType type;
 
-    public Category(String name, TransactionType type) {
+    public Category(String name, CategoryType type) {
         this.name = name;
         this.type = type;
     }

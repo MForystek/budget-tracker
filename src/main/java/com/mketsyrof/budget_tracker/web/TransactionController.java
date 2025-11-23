@@ -2,7 +2,7 @@ package com.mketsyrof.budget_tracker.web;
 
 import com.mketsyrof.budget_tracker.business.TransactionService;
 import com.mketsyrof.budget_tracker.dto.TransactionDto;
-import com.mketsyrof.budget_tracker.model.TransactionType;
+import com.mketsyrof.budget_tracker.model.CategoryType;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @GetMapping
-    public List<TransactionDto> getAllTransactionOfGivenType(@RequestParam(name = "type", required = false) TransactionType type) {
+    public List<TransactionDto> getAllTransactionOfGivenType(@RequestParam(name = "type", required = false) CategoryType type) {
         if (type == null) {
             log.info("GET " + API_PATH_FOR_LOGS);
             return transactionService.getAll();

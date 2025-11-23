@@ -1,7 +1,7 @@
 package com.mketsyrof.budget_tracker.dto;
 
 import com.mketsyrof.budget_tracker.model.PaymentMethod;
-import com.mketsyrof.budget_tracker.model.TransactionType;
+import com.mketsyrof.budget_tracker.model.CategoryType;
 import jakarta.validation.constraints.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,16 +33,16 @@ public class TransactionDto {
     private String categoryName;
 
     @NotNull
-    private TransactionType transactionType;
+    private CategoryType categoryType;
 
-    public TransactionDto(LocalDate date, Double amount, String currencyCode, PaymentMethod paymentMethod, String description, String categoryName, TransactionType transactionType) {
+    public TransactionDto(LocalDate date, Double amount, String currencyCode, PaymentMethod paymentMethod, String description, String categoryName, CategoryType categoryType) {
         this.date = date;
         this.amount = amount;
         this.currencyCode = currencyCode;
         this.paymentMethod = paymentMethod;
         this.description = description;
         this.categoryName = categoryName;
-        this.transactionType = transactionType;
+        this.categoryType = categoryType;
     }
 
 }

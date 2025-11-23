@@ -35,7 +35,7 @@ public class TransactionService {
                 .toList();
     }
 
-    public List<TransactionDto> getAllOfType(TransactionType type) {
+    public List<TransactionDto> getAllOfType(CategoryType type) {
         return transactionRepository.findByCategory_Type(type)
                 .stream()
                 .map(TransactionMapper::mapToDto)
@@ -44,13 +44,13 @@ public class TransactionService {
 
     public Transaction create(TransactionDto transactionDto) throws NoSuchElementException {
         Currency currency = currencyService.getByCode(transactionDto.getCurrencyCode());
-        Category category = categoryService.getByNameAndType(transactionDto.getCategoryName(), transactionDto.getTransactionType());
+        Category category = categoryService.getByNameAndType(transactionDto.getCategoryName(), transactionDto.getCategoryType());
         return transactionRepository.save(TransactionMapper.mapToEntity(transactionDto, currency, category));
     }
 
     public Transaction update(long transactionId, TransactionDto transactionDto) throws NoSuchElementException {
         Currency currency = currencyService.getByCode(transactionDto.getCurrencyCode());
-        Category category = categoryService.getByNameAndType(transactionDto.getCategoryName(), transactionDto.getTransactionType());
+        Category category = categoryService.getByNameAndType(transactionDto.getCategoryName(), transactionDto.getCategoryType());
 
         Transaction transaction = getById(transactionId);
         transaction.setDate(transactionDto.getDate());

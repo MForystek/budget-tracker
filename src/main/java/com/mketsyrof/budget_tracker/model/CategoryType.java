@@ -1,6 +1,6 @@
 package com.mketsyrof.budget_tracker.model;
 
-public enum TransactionType {
+public enum CategoryType {
     INCOME,
     EXPENSE
 }
