@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -24,7 +25,7 @@ public class Transaction {
     private Double amount;
 
     @ManyToOne
-    @JoinColumn(name = "currency_id")
+    @JoinColumn(name = "currency_code")
     private Currency currency;
 
     @Column
@@ -48,5 +49,17 @@ public class Transaction {
     }
 
     protected Transaction() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Transaction that = (Transaction) o;
+        return Objects.equals(id, that.id) && Objects.equals(date, that.date) && Objects.equals(amount, that.amount) && Objects.equals(currency, that.currency) && paymentMethod == that.paymentMethod && Objects.equals(description, that.description) && Objects.equals(category, that.category);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, date, amount, currency, paymentMethod, description, category);
     }
 }

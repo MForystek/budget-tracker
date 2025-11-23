@@ -3,7 +3,7 @@ INSERT INTO category (name, type) values
 ('BONUS', 'INCOME'),
 ('GIFT', 'INCOME'),
 ('SELLING', 'INCOME'),
-('OTHER_INCOME', 'INCOME');
+('OTHER', 'INCOME');
 
 INSERT INTO category (name, type) values
 ('GROCERIES', 'EXPENSE'),
@@ -21,5 +21,5 @@ INSERT INTO category (name, type) values
 ('TOYS', 'EXPENSE'),
 ('TRAVELING', 'EXPENSE'),
 ('BILLS', 'EXPENSE'),
-('OTHER_EXPENSE', 'EXPENSE'),
+('OTHER', 'EXPENSE'),
 ('INVESTING', 'EXPENSE');

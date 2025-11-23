@@ -7,11 +7,7 @@ import lombok.Getter;
 @Entity
 public class Currency {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private Long id;
-
-    @Column
     private String code;
 
     @Column

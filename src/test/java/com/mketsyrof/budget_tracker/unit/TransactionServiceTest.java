@@ -1,17 +1,16 @@
 package com.mketsyrof.budget_tracker.unit;
 
+import com.mketsyrof.budget_tracker.business.CategoryService;
+import com.mketsyrof.budget_tracker.business.CurrencyService;
 import com.mketsyrof.budget_tracker.business.TransactionService;
 import com.mketsyrof.budget_tracker.dto.TransactionDto;
 import com.mketsyrof.budget_tracker.dto.TransactionMapper;
 import com.mketsyrof.budget_tracker.model.*;
-import com.mketsyrof.budget_tracker.repo.CategoryRepository;
-import com.mketsyrof.budget_tracker.repo.CurrencyRepository;
 import com.mketsyrof.budget_tracker.repo.TransactionRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -28,31 +27,39 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class TransactionServiceTest {
+    private static final long ID = 0;
     private static final Category CATEGORY_INCOME = new Category("PAYCHECK", TransactionType.INCOME);
     private static final Category CATEGORY_EXPENSE = new Category("GROCERIES", TransactionType.EXPENSE);
     private static final Currency CURRENCY = new Currency("PLN", "Polish Złoty");
-
-    @Spy
-    private final TransactionMapper transactionMapper = new TransactionMapper();
+    private static final Transaction TRANSACTION = new Transaction(LocalDate.EPOCH, 1.0, CURRENCY, PaymentMethod.CARD, "Description", CATEGORY_INCOME);
 
     @Mock
     private TransactionRepository transactionRepositoryMock;
 
     @Mock
-    private CurrencyRepository currencyRepositoryMock;
+    private CategoryService categoryServiceMock;
 
     @Mock
-    private CategoryRepository categoryRepositoryMock;
+    private CurrencyService currencyServiceMock;
 
     @InjectMocks
     private TransactionService transactionService;
 
     @Test
-    void getAllTest() {
-        Transaction transaction = new Transaction(LocalDate.EPOCH, 1.0, CURRENCY, PaymentMethod.CARD, "Description", CATEGORY_INCOME);
-        TransactionDto transactionDto = transactionMapper.mapToDto(transaction);
+    void getByIdTest() {
+        when(transactionRepositoryMock.findById(ID))
+                .thenReturn(Optional.of(TRANSACTION));
 
-        when(transactionRepositoryMock.findAll()).thenReturn(List.of(transaction));
+        Transaction result = transactionService.getById(ID);
+
+        assertThat(result).isEqualTo(TRANSACTION);
+    }
+
+    @Test
+    void getAllTest() {
+        TransactionDto transactionDto = TransactionMapper.mapToDto(TRANSACTION);
+
+        when(transactionRepositoryMock.findAll()).thenReturn(List.of(TRANSACTION));
 
         List<TransactionDto> result = transactionService.getAll();
 
@@ -62,10 +69,8 @@ public class TransactionServiceTest {
 
     @Test
     void getAllOfTypeIncomeTest() {
-        Transaction transaction = new Transaction(LocalDate.EPOCH, 1.0, CURRENCY, PaymentMethod.CARD, "Description", CATEGORY_INCOME);
-
         when(transactionRepositoryMock.findByCategory_Type(TransactionType.INCOME))
-                .thenReturn(List.of(transaction));
+                .thenReturn(List.of(TRANSACTION));
 
         List<TransactionDto> result = transactionService.getAllOfType(TransactionType.INCOME);
 
@@ -90,12 +95,12 @@ public class TransactionServiceTest {
 
     @Test
     void createTest() {
-        TransactionDto transactionDto = new TransactionDto(LocalDate.EPOCH, 1.0, CURRENCY.getCode(), PaymentMethod.CARD, Optional.of("Description"), CATEGORY_INCOME.getName());
-        Transaction transaction = transactionMapper.mapToEntity(transactionDto, CURRENCY, CATEGORY_INCOME);
+        TransactionDto transactionDto = new TransactionDto(LocalDate.EPOCH, 1.0, CURRENCY.getCode(), PaymentMethod.CARD, "Description", CATEGORY_INCOME.getName(), CATEGORY_INCOME.getType());
+        Transaction transaction = TransactionMapper.mapToEntity(transactionDto, CURRENCY, CATEGORY_INCOME);
 
-        when(currencyRepositoryMock.findByCode(CURRENCY.getCode()))
+        when(currencyServiceMock.getByCode(CURRENCY.getCode()))
                 .thenReturn(CURRENCY);
-        when(categoryRepositoryMock.findByName(CATEGORY_INCOME.getName()))
+        when(categoryServiceMock.getByNameAndType(CATEGORY_INCOME.getName(), CATEGORY_INCOME.getType()))
                 .thenReturn(CATEGORY_INCOME);
         when(transactionRepositoryMock.save(any(Transaction.class)))
                 .thenReturn(transaction);
