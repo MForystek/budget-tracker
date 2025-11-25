@@ -4,11 +4,13 @@ import com.mketsyrof.budget_tracker.dto.TransactionDto;
 import com.mketsyrof.budget_tracker.dto.TransactionMapper;
 import com.mketsyrof.budget_tracker.model.*;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@ActiveProfiles("test")
 public class TransactionMapperTest {
     @Test
     void toDtoTest() {
