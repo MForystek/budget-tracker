@@ -1,9 +1,15 @@
 package com.mketsyrof.budget_tracker.functional;
 
+import com.mketsyrof.budget_tracker.business.TransactionService;
 import com.mketsyrof.budget_tracker.dto.TransactionDto;
-import com.mketsyrof.budget_tracker.model.CategoryType;
-import com.mketsyrof.budget_tracker.model.PaymentMethod;
+import com.mketsyrof.budget_tracker.dto.TransactionMapper;
+import com.mketsyrof.budget_tracker.model.*;
+import com.mketsyrof.budget_tracker.repo.CategoryRepository;
+import com.mketsyrof.budget_tracker.repo.CurrencyRepository;
+import com.mketsyrof.budget_tracker.repo.TransactionRepository;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +28,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-@Transactional
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("test")
 public class TransactionAPITest {
@@ -31,16 +36,28 @@ public class TransactionAPITest {
     @Autowired
     private TestRestTemplate testRestTemplate;
 
+    @Autowired
+    private CurrencyRepository currencyRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    @AfterEach
+    public void clearTransactionTable() {
+        transactionRepository.deleteAll();
+    }
+
     @Test
     public void getAllTransactionsTest() {
-        TransactionDto transactionDto = new TransactionDto(
-                LocalDate.of(2000, 1, 1),
-                10.0,
-                "PLN",
-                PaymentMethod.CARD,
-                "Income test 1",
-                "PAYCHECK",
-                CategoryType.INCOME);
+        Currency currency = getCurrency();
+        Category category = getIncomeCategory();
+        TransactionDto transactionDto = getTransactionDto(currency, category);
+        Transaction transaction = TransactionMapper.mapToEntity(transactionDto, currency, category);
+
+        transactionRepository.save(transaction);
 
         ResponseEntity<List<TransactionDto>> response = testRestTemplate.exchange(
                 TRANSACTION_API_URL,
@@ -54,22 +71,52 @@ public class TransactionAPITest {
         assertThat(response.getBody())
                 .isNotNull();
         assertThat(response.getBody().size())
-                .isEqualTo(4);
+                .isEqualTo(1);
         assertThat(response.getBody().getFirst())
                 .isEqualTo(transactionDto);
     }
 
     @Test
     public void getAllIncomeTransactionsTest() {
-        getAllTransactionsOfType("INCOME");
+        getAllTransactionsOfType(CategoryType.INCOME);
     }
 
     @Test
     public void getAllExpenseTransactionsTest() {
-        getAllTransactionsOfType("EXPENSE");
+        getAllTransactionsOfType(CategoryType.EXPENSE);
     }
 
-    private void getAllTransactionsOfType(String type) {
+    private Currency getCurrency() {
+        return currencyRepository.findByCode("PLN").get();
+    }
+
+    private Category getIncomeCategory() {
+        return categoryRepository.findByNameAndType("PAYCHECK", CategoryType.INCOME).get();
+    }
+
+    private Category getExpenseCategory() {
+        return categoryRepository.findByNameAndType("GROCERIES", CategoryType.EXPENSE).get();
+    }
+
+    private TransactionDto getTransactionDto(Currency currency, Category category) {
+        return new TransactionDto(
+                LocalDate.EPOCH,
+                1.0,
+                currency.getCode(),
+                PaymentMethod.CARD,
+                "Description",
+                category.getName(),
+                category.getType());
+    }
+
+    private void getAllTransactionsOfType(CategoryType type) {
+        Currency currency = getCurrency();
+        Category category = type.equals(CategoryType.INCOME) ? getIncomeCategory() : getExpenseCategory();
+        TransactionDto transactionDto = getTransactionDto(currency, category);
+        Transaction transaction = TransactionMapper.mapToEntity(transactionDto, currency, category);
+
+        transactionRepository.save(transaction);
+
         ResponseEntity<List<TransactionDto>> response = testRestTemplate.exchange(
                 TRANSACTION_API_URL + "?type={type}",
                 HttpMethod.GET,
@@ -82,11 +129,11 @@ public class TransactionAPITest {
         assertThat(response.getBody())
                 .isNotNull();
         assertThat(response.getBody().size())
-                .isEqualTo(2);
+                .isEqualTo(1);
         assertThat(response.getBody()
                 .stream()
                 .map(TransactionDto::getCategoryType)
-                .allMatch(t -> t.toString().equals(type)))
+                .allMatch(t -> t.equals(type)))
             .isTrue();
     }
 }
