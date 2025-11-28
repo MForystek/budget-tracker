@@ -58,6 +58,12 @@ public class Transaction {
         return Objects.equals(id, that.id) && Objects.equals(date, that.date) && Objects.equals(amount, that.amount) && Objects.equals(currency, that.currency) && paymentMethod == that.paymentMethod && Objects.equals(description, that.description) && Objects.equals(category, that.category);
     }
 
+    public boolean equalsNoId(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Transaction that = (Transaction) o;
+        return Objects.equals(date, that.date) && Objects.equals(amount, that.amount) && Objects.equals(currency, that.currency) && paymentMethod == that.paymentMethod && Objects.equals(description, that.description) && Objects.equals(category, that.category);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(id, date, amount, currency, paymentMethod, description, category);
