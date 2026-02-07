@@ -11,7 +11,6 @@ import java.util.List;
 
 @AllArgsConstructor
 @Slf4j
-@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping(path = "/api/categories")
 public class CategoryController {
