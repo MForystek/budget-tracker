@@ -18,6 +18,12 @@ public class CorsConfig {
                         .allowedOriginPatterns("http://192.168.*.*:5173")
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*");
+
+                registry.addMapping("/actuator/**")
+                        .allowedOrigins("http://localhost:5173")
+                        .allowedOriginPatterns("http://192.168.*.*:5173")
+                        .allowedMethods("GET")
+                        .allowedHeaders("*");
             }
         };
     }
