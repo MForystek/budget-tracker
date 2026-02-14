@@ -23,6 +23,7 @@ public class TransactionMapperTest {
                 new Category("PAYCHECK", CategoryType.INCOME)
         );
         TransactionDto transactionDtoManual = new TransactionDto(
+                null,
                 LocalDate.EPOCH,
                 1.0,
                 "PLN",
@@ -45,6 +46,7 @@ public class TransactionMapperTest {
         Currency currency = new Currency("PLN", "Polish Złoty");
         Category category = new Category("PAYCHECK", CategoryType.INCOME);
         TransactionDto transactionDto = new TransactionDto(
+                1L,
                 LocalDate.EPOCH,
                 1.0,
                 currency.getCode(),

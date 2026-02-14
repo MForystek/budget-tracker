@@ -7,6 +7,7 @@ import com.mketsyrof.budget_tracker.model.Transaction;
 public class TransactionMapper {
     public static TransactionDto mapToDto(Transaction transaction) {
         return new TransactionDto(
+                transaction.getId(),
                 transaction.getDate(),
                 transaction.getAmount(),
                 transaction.getCurrency().getCode(),

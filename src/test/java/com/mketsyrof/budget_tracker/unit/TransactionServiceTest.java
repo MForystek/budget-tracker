@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 @ActiveProfiles("test")
 public class TransactionServiceTest {
-    private static final long ID = 0;
+    private static final long ID = 1;
     private static final LocalDate DATE = LocalDate.EPOCH;
     private static final double AMOUNT = 1.0;
     private static final Currency CURRENCY = new Currency("PLN", "Polish Złoty");
@@ -37,7 +37,7 @@ public class TransactionServiceTest {
     private static final Category CATEGORY_INCOME = new Category("PAYCHECK", CategoryType.INCOME);
     private static final Category CATEGORY_EXPENSE = new Category("GROCERIES", CategoryType.EXPENSE);
     private static final Transaction TRANSACTION = new Transaction(DATE, AMOUNT, CURRENCY, PAYMENT_METHOD, DESCRIPTION, CATEGORY_INCOME);
-    private static final TransactionDto TRANSACTION_DTO = new TransactionDto(DATE, AMOUNT, CURRENCY.getCode(), PAYMENT_METHOD, DESCRIPTION, CATEGORY_INCOME.getName(), CATEGORY_INCOME.getType());
+    private static final TransactionDto TRANSACTION_DTO = new TransactionDto(ID, DATE, AMOUNT, CURRENCY.getCode(), PAYMENT_METHOD, DESCRIPTION, CATEGORY_INCOME.getName(), CATEGORY_INCOME.getType());
 
     @Mock
     private TransactionRepository transactionRepositoryMock;

@@ -190,6 +190,7 @@ public class TransactionAPITest {
 
     private TransactionDto getTransactionDto(Currency currency, Category category) {
         return new TransactionDto(
+                1L,
                 LocalDate.EPOCH,
                 1.0,
                 currency.getCode(),

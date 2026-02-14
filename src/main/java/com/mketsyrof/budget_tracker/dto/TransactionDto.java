@@ -14,6 +14,9 @@ import java.time.LocalDate;
 @EqualsAndHashCode
 public class TransactionDto {
     @NotNull
+    private Long id;
+
+    @NotNull
     private LocalDate date;
 
     @NotNull
@@ -35,7 +38,8 @@ public class TransactionDto {
     @NotNull
     private CategoryType categoryType;
 
-    public TransactionDto(LocalDate date, Double amount, String currencyCode, PaymentMethod paymentMethod, String description, String categoryName, CategoryType categoryType) {
+    public TransactionDto(Long id, LocalDate date, Double amount, String currencyCode, PaymentMethod paymentMethod, String description, String categoryName, CategoryType categoryType) {
+        this.id = id;
         this.date = date;
         this.amount = amount;
         this.currencyCode = currencyCode;
